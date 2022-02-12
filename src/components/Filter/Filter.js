@@ -2,9 +2,7 @@ import FilterMenuItem from "./FilterMenuItem";
 import { Typography, Card, Grid } from "@mui/material";
 import useStyle from "../Product/productStyle";
 import { useSelector } from "react-redux";
-const filterProductsToUniqueOfField = (products, field) => {
-  return [...new Set(products.map((product) => product[field]))];
-};
+
 const Filter = (props) => {
   const classes = useStyle();
   const products = useSelector((state) => state.reducer.products);

@@ -1,6 +1,4 @@
 import { Card, Grid, Typography } from "@mui/material";
-import ProductFooter from "./ProductFooter";
-import ProductHeader from "./ProductHeader";
 import useStyle from "./productStyle";
 
 const Product = (props) => {

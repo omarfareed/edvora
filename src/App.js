@@ -1,4 +1,4 @@
-import { Card, Grid, Typography } from "@mui/material";
+import { Card, Grid, Typography, useMediaQuery } from "@mui/material";
 import { useEffect, useState } from "react";
 import "./App.css";
 // import Product from "./components/Product/Product";
@@ -7,6 +7,7 @@ import useStyle from "./components/Product/productStyle";
 import { useDispatch, useSelector } from "react-redux";
 import { EdvoraActions } from "./store/evdoraSlice";
 import Filter from "./components/Filter/Filter";
+import { useTheme } from "@emotion/react";
 const filterProductsByName = (products) => {
   const filteredProducts = {};
   products.forEach((product) => {
@@ -23,6 +24,9 @@ function App() {
   const { product_name: productNameOption } = useSelector(
     (state) => state.reducer.filterOptions
   );
+  const theme = useTheme();
+  // const matchesDownLG = useMediaQuery((theme) => theme.breakpoints.down("lg"));
+  const matchesDownLG = useMediaQuery("(max-width:1300px)")
   useEffect(async () => {
     const data = await (
       await fetch(productsLink, {
@@ -33,27 +37,48 @@ function App() {
       })
     ).json();
     dispatch(EdvoraActions.initializeProducts(data));
-    console.log(data);
   }, []);
   const classes = useStyle();
   const filteredProducts = filterProductsByName(products);
   // return <ProductList />;
   return (
-    <Grid container className={classes.mainContainer}>
+    <Grid
+      container
+      direction={matchesDownLG ? "column" : "row"}
+      alignItems={matchesDownLG ? "center" : "normal"}
+      className={classes.mainContainer}
+    >
       {/* filter section */}
-      <Grid item xs={2.5}>
+      {matchesDownLG && (
+        <Grid
+          item
+          variant="h1"
+          component={Typography}
+          className={classes.edvoraHeader}
+        >
+          Edvora
+        </Grid>
+      )}
+      <Grid item>
         <Filter />
       </Grid>
       <Grid item>
-        <Grid container direction="column" rowSpacing="2.5rem">
-          <Grid
-            item
-            variant="h1"
-            component={Typography}
-            className={classes.edvoraHeader}
-          >
-            Edvora
-          </Grid>
+        <Grid
+          container
+          alignItems={matchesDownLG ? "center" : "normal"}
+          direction="column"
+          rowSpacing="2.5rem"
+        >
+          {!matchesDownLG && (
+            <Grid
+              item
+              variant="h1"
+              component={Typography}
+              className={classes.edvoraHeader}
+            >
+              Edvora
+            </Grid>
+          )}
           <Grid
             item
             variant="h3"
@@ -69,8 +94,8 @@ function App() {
             {/* <ProductList products={products.splice(1, 4)} /> */}
           {/*</Grid> */}
           {!productNameOption &&
-            Object.keys(filteredProducts).map((productName) => (
-              <ProductList products={filteredProducts[productName]} />
+            Object.keys(filteredProducts).map((productName, i) => (
+              <ProductList key={i} products={filteredProducts[productName]} />
             ))}
           {productNameOption && (
             <ProductList products={filteredProducts[productNameOption]} />

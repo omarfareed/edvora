@@ -31,6 +31,9 @@ const useStyle = makeStyles((theme) => ({
       backgroundColor: theme.palette.primary.main,
       color: "#FFF",
       minHeight: "100%",
+      [theme.breakpoints.down("lg")]: {
+        padding: "2rem",
+      },
     },
   },
   edvoraHeader: {

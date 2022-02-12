@@ -1,5 +1,5 @@
 import useStyle from "./productStyle";
-import { Button, Grid, Typography } from "@mui/material";
+import { Button, Grid, Typography, useMediaQuery } from "@mui/material";
 import Product from "./Product";
 import { useState } from "react";
 import { connectAdvanced, useSelector } from "react-redux";
@@ -9,6 +9,13 @@ const ProductList = ({ products }) => {
   const { city: cityOption, state: stateOption } = useSelector(
     (state) => state.reducer.filterOptions
   );
+  let maxProductsCount = 4;
+  const matches3Items = useMediaQuery("(max-width:1066px)");
+  const matches2Items = useMediaQuery("(max-width:840px)");
+  const matches1Item = useMediaQuery("(max-width:600px)");
+  if (matches3Items) maxProductsCount--;
+  if (matches2Items) maxProductsCount--;
+  if (matches1Item) maxProductsCount--;
   products = products.filter(
     ({ address: { city, state } }) =>
       (!cityOption || city === cityOption) &&
@@ -17,14 +24,14 @@ const ProductList = ({ products }) => {
   const classes = useStyle();
   if (products.length === 0) return <></>;
   const sliceProducts = () => {
-    if (products.length <= 4) return products;
+    if (products.length <= maxProductsCount) return products;
     // const endIndex = min(products.length + 1, startIndex + 4);
     // return [
     //   ...products.slice(startIndex, endIndex),
     //   ...products.slice(0, 4 - (endIndex - startIndex)),
     // ];
     const sliced = [];
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < maxProductsCount; i++) {
       sliced.push(products[(startIndex + i) % products.length]);
     }
     return sliced;
@@ -41,12 +48,12 @@ const ProductList = ({ products }) => {
         className={classes.productListContainer}
         columnSpacing="2rem"
       >
-        {slicedProducts.map((product) => (
-          <Grid item>
+        {slicedProducts.map((product, i) => (
+          <Grid item key={i}>
             <Product {...product} />
           </Grid>
         ))}
-        {products.length > 4 && (
+        {products.length > maxProductsCount && (
           <Grid
             item
             component={Button}
@@ -65,9 +72,9 @@ const ProductList = ({ products }) => {
               <path
                 d="M1 1L11 17.5L1 34"
                 stroke="white"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
               />
             </svg>
           </Grid>
